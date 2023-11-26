@@ -154,18 +154,28 @@ const StateVisualizer = () => {
                 <div className="halfChild">
                     <div className="description">
                         <p>
-                            Here I can describe what the user must do
+                            Current Transitions
                         </p>
                     </div>
                 </div>
                 <div className="halfChild">
-                    <p> Here I can have some input forms</p>
+                    <p> Add to transition function </p>
                     <form id="yourFormId">
-                        <label htmlFor="inputField">Input Field:</label>
+                        <label htmlFor="inputField">States</label>
                         <input type="text" id="inputField" name="inputField" required/>
-                        <button type={"submit"}>Submit</button>
+                        <label htmlFor="inputField">Transitions</label>
+                        <input type="text" id="inputField" name="inputField" required/>
+                        <button type={"submit"}>Submit new changes</button>
                     </form>
                 </div>
+            </div>
+
+            <div class="code">
+                <p class="biggerText"> Current code </p>
+                <form id="currentCode" onSubmit={(e) => e.preventDefault()}>
+                    <input type="text" id="inputField" name="inputField"/>
+                    <button type={"submit"}>Visualize Changes</button>
+                </form>
             </div>
         </div>
     )
