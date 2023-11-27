@@ -44,17 +44,23 @@
 }
 
 form {
+    white-space: pre-line;
     display: flex;
     flex-direction: column;
 }
 
-form input {
+form textarea {
     color: black;
     padding-bottom: 20px;
-    text-align: center;
+    text-align: left;
 }
 .biggerText {
     font-size: 20px;
+    font-weight: bold;
+}
+.mediumText {
+    font-size: 18px;
+    text-decoration: underline;
 }
 .buttonSubmit {
     background-color: #393535;
@@ -82,6 +88,11 @@ form input {
 .fullParent {
     display: flex;
     width: 100%;
+}
+
+#codeTextArea {
+    padding-bottom: 300px;
+    text: black;
 }
 
 .halfChild {

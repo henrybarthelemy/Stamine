@@ -7,6 +7,7 @@ import cytoscape from 'cytoscape';
 import "./style.css";
 
 const StateVisualizer = () => {
+    const DELTA_SYMBOL = "ẟ";
     const [cy, setCy] = useState(null);
     const [nodeValue, setNodeValue] = useState<string>('');
 
@@ -15,6 +16,11 @@ const StateVisualizer = () => {
         "edges": [["5", "6", "a"], ["6", "7", "b"]]
     };
     const [transitions, setTransitions] = useState(initialTransition);
+    const [code, setCode] = useState(transformToCode(initialTransition));
+
+    function transformToCode(dTransition) {
+
+    }
 
     useEffect(() => {
         // Initialize Cytoscape
@@ -166,7 +172,17 @@ const StateVisualizer = () => {
 
         cyInstance.center(nodes); // Center the nodes in the viewport
     };
-
+    function generateEdgeListFromTransitions() {
+        return transitions.edges.map((edge, index) => {
+            const [source, target, label] = edge;
+            return (
+                <p key={index}>
+                    {`${DELTA_SYMBOL}(${source}, ${label}) = ${target}`}
+                </p>
+            );
+        });
+    }
+    //"edges": [["5", "6", "a"], ["6", "7", "b"]] -> "ẟ(5, a) = 6 \nẟ(6, b) = 7"
 
     return (
         <div>
@@ -182,26 +198,23 @@ const StateVisualizer = () => {
                 <div className="halfChild">
                     <div className="description">
                         <p>
-                            Current Transitions
+                            How transitions work....
                         </p>
                     </div>
                 </div>
                 <div className="halfChild">
-                    <p> Add to transition function </p>
-                    <form id="yourFormId">
-                        <label htmlFor="inputField">States</label>
-                        <input type="text" id="inputField" name="inputField" required/>
-                        <label htmlFor="inputField">Transitions</label>
-                        <input type="text" id="inputField" name="inputField" required/>
-                        <button type={"submit"}>Submit new changes</button>
-                    </form>
+                    <p class="biggerText"> Current state diagram </p>
+                    <p class="mediumText">States</p>
+                    <p> {transitions.nodes.join(', ')} </p>
+                    <p class="mediumText">Transitions</p>
+                    {generateEdgeListFromTransitions()}
                 </div>
             </div>
 
             <div class="code">
                 <p class="biggerText"> Current code </p>
                 <form id="currentCode" onSubmit={(e) => e.preventDefault()}>
-                    <input type="text" id="inputField" name="inputField"/>
+                    <textarea type="text" id="codeTextArea" name="inputField"/>
                     <button class="buttonSubmit" type={"submit"}>Visualize Changes</button>
                 </form>
             </div>
