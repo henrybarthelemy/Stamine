@@ -16,11 +16,7 @@ const StateVisualizer = () => {
         "edges": [["5", "6", "a"], ["6", "7", "b"]]
     };
     const [transitions, setTransitions] = useState(initialTransition);
-    const [code, setCode] = useState(transformToCode(initialTransition));
-
-    function transformToCode(dTransition) {
-
-    }
+    const [code, setCode] = useState<string>(transformToCode(initialTransition));
 
     useEffect(() => {
         // Initialize Cytoscape
@@ -92,13 +88,19 @@ const StateVisualizer = () => {
             boxSelectionEnabled: false,
         });
         newCy.add(mapToElements(transitions));
-        newCy.nodes().ungrabify();
+
+        // Make nodes grabbable
+        newCy.nodes().grabbable(true);
+
+        // Set event handler for node drag
+        newCy.on('dragfree', 'node', (event) => {
+            const node = event.target;
+        });
 
         setCy(newCy);
         // Function to handle resize
         const handleResize = () => {
             newCy.resize();
-            applyHorizontalLayout(newCy);
         };
 
         // Add event listener for resize
@@ -139,7 +141,6 @@ const StateVisualizer = () => {
     }
 
     // Function to layout nodes in a horizontal line
-    // Function to layout nodes in a horizontal line
     const applyHorizontalLayout = (cyInstance) => {
         const nodes = cyInstance.nodes();
         const containerWidth = cyInstance.container().offsetWidth;
@@ -172,7 +173,10 @@ const StateVisualizer = () => {
 
         cyInstance.center(nodes); // Center the nodes in the viewport
     };
+
+    // Generates the p text for each transition
     function generateEdgeListFromTransitions() {
+        //"edges": [["5", "6", "a"], ["6", "7", "b"]] -> "ẟ(5, a) = 6 \nẟ(6, b) = 7"
         return transitions.edges.map((edge, index) => {
             const [source, target, label] = edge;
             return (
@@ -182,7 +186,45 @@ const StateVisualizer = () => {
             );
         });
     }
-    //"edges": [["5", "6", "a"], ["6", "7", "b"]] -> "ẟ(5, a) = 6 \nẟ(6, b) = 7"
+
+    // Transforms the transition json to stamine code
+    function transformToCode(dTransition) {
+        const states = dTransition.nodes;
+        const edges = dTransition.edges;
+        const stateLine = `states = [${states.join(', ')}]`;
+        const codeLines = edges.map(([source, target, label]) => {
+            return `${source} goes to ${target} on "${label}"`;
+        });
+        return [stateLine, ...codeLines].join('\n');
+    }
+
+    // Parses the code to stamine
+    function parseCodeToStamine(code) {
+        const lines = code.split('\n');
+
+        // Extract states from the first line
+        const statesMatch = lines[0].match(/states = \[([\d,\s]+)\]/);
+        const states = statesMatch ? statesMatch[1].split(',').map(s => s.trim()) : [];
+
+        // Extract transitions from the remaining lines
+        const edges = lines.slice(1).map(line => {
+            const match = line.match(/(\d+) goes to (\d+) on "(.+)"/);
+            if (match) {
+                const [_, source, target, label] = match;
+                return [source, target, label];
+            }
+            return null;
+        }).filter(Boolean);
+
+        return { nodes: states, edges: edges };
+    }
+
+    const handleSubmission = () => {
+        let transitions = parseCodeToStamine(code);
+        cy.elements().remove();
+        cy.add(mapToElements(transitions));
+        applyHorizontalLayout(cy);
+    }
 
     return (
         <div>
@@ -218,8 +260,11 @@ const StateVisualizer = () => {
 
             <div className="code">
                 <p className="biggerText"> Current code </p>
-                <form id="currentCode" onSubmit={(e) => e.preventDefault()}>
-                    <textarea type="text" id="codeTextArea" name="inputField"/>
+                <form id="currentCode" onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmission();
+                }}>
+                    <textarea type="text" value={code} onChange={(e) => setCode(e.target.value)} id="codeTextArea" name="inputField"/>
                     <button className="buttonSubmit" type={"submit"}>Visualize Changes</button>
                 </form>
             </div>
