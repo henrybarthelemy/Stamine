@@ -1,4 +1,6 @@
 
+// noinspection TypeScriptValidateTypes
+
 'use client';
 import React, { useEffect, useState } from 'react';
 import cytoscape from 'cytoscape';
@@ -10,32 +12,9 @@ const StateVisualizer = () => {
 
 
     let initialTransition = {
-        "nodes": ["1", "2", "3"],
-        "edges": [["1", "2", "a"], ["2", "3", "b"]]
+        "nodes": ["5", "6", "7"],
+        "edges": [["5", "6", "a"], ["6", "7", "b"]]
     };
-
-    // Preprocesses the json to cytoscape format
-    const mapToElements = (transitionState) => {
-        let nodes = transitionState.nodes;
-        let edges = transitionState.edges;
-        let elements = [];
-        // Adds each nodes to the elements
-        nodes.forEach(node => {
-            let data = { id: 'item-'+node, label: node };
-            console.log(data);
-            elements.push({data: data});
-        })
-        edges.forEach(edge => {
-           let data = {
-               id: "edge-"+edge[0]+"-"+edge[1]+"-"+edge[2],
-               label: edge[2],
-               source: "item-"+edge[0],
-               target: "item-"+edge[1]
-           }
-            elements.push({data: data});
-        });
-        return elements;
-    }
 
     const [transitions, setTransitions] = useState(initialTransition);
 
@@ -108,21 +87,24 @@ const StateVisualizer = () => {
             userPanningEnabled: false,
             boxSelectionEnabled: false,
         });
+        console.log(initialTransition)
         newCy.add(mapToElements(initialTransition));
 
         newCy.nodes().ungrabify();
+        console.log(newCy.elements())
+
         setCy(newCy);
         // Function to handle resize
         const handleResize = () => {
             newCy.resize();
-            applyTreeLayout(newCy);
+            applyHorizontalLayout(newCy);
         };
 
         // Add event listener for resize
         window.addEventListener('resize', handleResize);
 
         // Apply initial layout
-        applyTreeLayout(newCy);
+        applyHorizontalLayout(newCy);
 
         // Remove event listener on cleanup
         return () => {
@@ -131,15 +113,49 @@ const StateVisualizer = () => {
         };
     }, []);
 
+
+
+    // Preprocesses the json to cytoscape format
+    const mapToElements = (transitionState) => {
+        let nodes = transitionState.nodes;
+        let edges = transitionState.edges;
+        let elements = [];
+        // Adds each nodes to the elements
+        nodes.forEach(node => {
+            let data = { id: 'item-'+node, label: node };
+            console.log(data);
+            elements.push({data: data});
+        })
+        edges.forEach(edge => {
+            let data = {
+                id: "edge-"+edge[0]+"-"+edge[1]+"-"+edge[2],
+                label: edge[2],
+                source: "item-"+edge[0],
+                target: "item-"+edge[1]
+            }
+            elements.push({data: data});
+        });
+        return elements;
+    }
+
     // Function to layout nodes in a horizontal line
-    const applyTreeLayout = (cyInstance) => {
+    // Function to layout nodes in a horizontal line
+    const applyHorizontalLayout = (cyInstance) => {
         const nodes = cyInstance.nodes();
         const containerWidth = cyInstance.container().offsetWidth;
         const containerHeight = cyInstance.container().offsetHeight;
-        let depth = 1;
+        const nodeWidth = 50; // Fixed node width
+        const spacing = containerWidth / (nodes.length + 1); // Calculate spacing based on container width and node count
 
-        nodes.forEach((cur) => {
-
+        nodes.positions((node, index) => {
+            let x = spacing * (index + 1); // Calculate x position with equal spacing
+            if (nodes.length === 1) {
+                x = containerWidth / 2; // Center the node if it's the only one
+            }
+            return {
+                x,
+                y: containerHeight / 2 // Center y position
+            };
         });
 
         // Instead of fit, manually set zoom and pan
