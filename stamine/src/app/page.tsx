@@ -3,7 +3,7 @@ import "./style.css";
 
 export default function Home() {
   return (
-    <div class="information">
+    <div className="information">
       <p> Stamine Project </p>
       <p> By Henry Barthelemy </p>
     </div>

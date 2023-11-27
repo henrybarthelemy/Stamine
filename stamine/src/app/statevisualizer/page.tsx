@@ -198,24 +198,29 @@ const StateVisualizer = () => {
                 <div className="halfChild">
                     <div className="description">
                         <p>
-                            How transitions work....
+                            In automata theory, a transition function dictates how a finite automaton or state machine
+                            moves from one state to another in response to input. Taking the current state and an input
+                            symbol, it determines the next state. A transition function serves as the rules for state
+                            transitions. This function is fundamental in modeling computational processes,
+                            offering a systematic approach to understanding and analyzing the dynamic behavior
+                            of systems.
                         </p>
                     </div>
                 </div>
                 <div className="halfChild">
-                    <p class="biggerText"> Current state diagram </p>
-                    <p class="mediumText">States</p>
+                    <p className="biggerText"> Current state diagram </p>
+                    <p className="mediumText">States</p>
                     <p> {transitions.nodes.join(', ')} </p>
-                    <p class="mediumText">Transitions</p>
+                    <p className="mediumText">Transitions</p>
                     {generateEdgeListFromTransitions()}
                 </div>
             </div>
 
-            <div class="code">
-                <p class="biggerText"> Current code </p>
+            <div className="code">
+                <p className="biggerText"> Current code </p>
                 <form id="currentCode" onSubmit={(e) => e.preventDefault()}>
                     <textarea type="text" id="codeTextArea" name="inputField"/>
-                    <button class="buttonSubmit" type={"submit"}>Visualize Changes</button>
+                    <button className="buttonSubmit" type={"submit"}>Visualize Changes</button>
                 </form>
             </div>
         </div>
