@@ -10,12 +10,10 @@ const StateVisualizer = () => {
     const [cy, setCy] = useState(null);
     const [nodeValue, setNodeValue] = useState<string>('');
 
-
     let initialTransition = {
         "nodes": ["5", "6", "7"],
         "edges": [["5", "6", "a"], ["6", "7", "b"]]
     };
-
     const [transitions, setTransitions] = useState(initialTransition);
 
     useEffect(() => {
@@ -87,11 +85,8 @@ const StateVisualizer = () => {
             userPanningEnabled: false,
             boxSelectionEnabled: false,
         });
-        console.log(initialTransition)
-        newCy.add(mapToElements(initialTransition));
-
+        newCy.add(mapToElements(transitions));
         newCy.nodes().ungrabify();
-        console.log(newCy.elements())
 
         setCy(newCy);
         // Function to handle resize
@@ -123,7 +118,6 @@ const StateVisualizer = () => {
         // Adds each nodes to the elements
         nodes.forEach(node => {
             let data = { id: 'item-'+node, label: node };
-            console.log(data);
             elements.push({data: data});
         })
         edges.forEach(edge => {
