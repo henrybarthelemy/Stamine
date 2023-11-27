@@ -7,6 +7,15 @@ import "./style.css";
 const StateVisualizer = () => {
     const [cy, setCy] = useState(null);
     const [nodeValue, setNodeValue] = useState<string>('');
+
+
+    let initialTransition = {
+        "nodes": ["1", "2", "3"],
+        "edges": [("1", "2", "a"), ("2", "3", "b")]
+    };
+
+    const [transitions, setTransitions] = useState(initialTransition);
+
     useEffect(() => {
         // Initialize Cytoscape
         const newCy = cytoscape({
@@ -18,9 +27,8 @@ const StateVisualizer = () => {
                 { data: { id: 'item-3', label: '3' } },
 
                 // edges
-                { data: { id: 'edge-1', source: 'head-1', target: 'item-2' } },
-                { data: { id: 'edge-2', source: 'head-1', target: 'item-3' } },
-                // edges can be removed if not needed
+                { data: { id: 'edge-1', label: 'bcd', source: 'head-1', target: 'item-2' } },
+                { data: { id: 'edge-2', label: 'asd', source: 'item-2', target: 'item-3' } },
             ],
             style: [
                 {
@@ -58,8 +66,15 @@ const StateVisualizer = () => {
                 {
                     selector: 'edge',
                     style: {
+                        'label': 'data(label)',
                         'width': 3,
-                        'line-color': '#ccc'
+                        'line-color': '#ccc',
+                        'overlay-padding': 0,
+                        'overlay-color': 'transparent',
+                        'overlay-opacity': 0,
+                        'target-arrow-shape': 'triangle',
+                        'curve-style': 'bezier',
+                        'target-arrow-color': '#ccc'
                     }
                 },
                 {
@@ -68,17 +83,6 @@ const StateVisualizer = () => {
                         'active-bg-opacity': 0,
                         'active-bg-color': 'transparent',
                         'active-bg-size': 0,
-
-
-
-                    }
-                },
-                {
-                    selector: 'edge',
-                    style: {
-                        'overlay-padding': 0,
-                        'overlay-color': 'transparent',
-                        'overlay-opacity': 0,
                     }
                 }
             ],
