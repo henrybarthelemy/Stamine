@@ -10,7 +10,6 @@ const StateVisualizer = () => {
     const DELTA_SYMBOL = "ẟ";
     const [cy, setCy] = useState(null);
     const [nodeValue, setNodeValue] = useState<string>('');
-
     let initialTransition = {
         "nodes": ["5", "6", "7"],
         "edges": [["5", "6", "a"], ["6", "7", "b"]]
@@ -221,6 +220,7 @@ const StateVisualizer = () => {
 
     const handleSubmission = () => {
         let transitions = parseCodeToStamine(code);
+        setTransitions(transitions);
         cy.elements().remove();
         cy.add(mapToElements(transitions));
         applyHorizontalLayout(cy);

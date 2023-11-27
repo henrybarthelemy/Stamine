@@ -5,7 +5,7 @@ State Machine Language Visualizer
 States are specified in a list format in the first line of the code file
 Following lines can follow either the form
 ```
-[StateFrom] goes to [StateTo] on "[Input]"
+[StateFrom] goes to [StateTo] on [Input]
 ```
 or
 ```
