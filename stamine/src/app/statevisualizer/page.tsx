@@ -11,8 +11,31 @@ const StateVisualizer = () => {
 
     let initialTransition = {
         "nodes": ["1", "2", "3"],
-        "edges": [("1", "2", "a"), ("2", "3", "b")]
+        "edges": [["1", "2", "a"], ["2", "3", "b"]]
     };
+
+    // Preprocesses the json to cytoscape format
+    const mapToElements = (transitionState) => {
+        let nodes = transitionState.nodes;
+        let edges = transitionState.edges;
+        let elements = [];
+        // Adds each nodes to the elements
+        nodes.forEach(node => {
+            let data = { id: 'item-'+node, label: node };
+            console.log(data);
+            elements.push({data: data});
+        })
+        edges.forEach(edge => {
+           let data = {
+               id: "edge-"+edge[0]+"-"+edge[1]+"-"+edge[2],
+               label: edge[2],
+               source: "item-"+edge[0],
+               target: "item-"+edge[1]
+           }
+            elements.push({data: data});
+        });
+        return elements;
+    }
 
     const [transitions, setTransitions] = useState(initialTransition);
 
@@ -20,16 +43,6 @@ const StateVisualizer = () => {
         // Initialize Cytoscape
         const newCy = cytoscape({
             container: document.getElementById('cy'),
-            elements: [
-                // nodes
-                { data: { id: 'head-1', label: '1' } },
-                { data: { id: 'item-2', label: '2' } },
-                { data: { id: 'item-3', label: '3' } },
-
-                // edges
-                { data: { id: 'edge-1', label: 'bcd', source: 'head-1', target: 'item-2' } },
-                { data: { id: 'edge-2', label: 'asd', source: 'item-2', target: 'item-3' } },
-            ],
             style: [
                 {
                     selector: 'node:active',
@@ -95,6 +108,7 @@ const StateVisualizer = () => {
             userPanningEnabled: false,
             boxSelectionEnabled: false,
         });
+        newCy.add(mapToElements(initialTransition));
 
         newCy.nodes().ungrabify();
         setCy(newCy);
@@ -178,7 +192,7 @@ const StateVisualizer = () => {
                 <p class="biggerText"> Current code </p>
                 <form id="currentCode" onSubmit={(e) => e.preventDefault()}>
                     <input type="text" id="inputField" name="inputField"/>
-                    <button type={"submit"}>Visualize Changes</button>
+                    <button class="buttonSubmit" type={"submit"}>Visualize Changes</button>
                 </form>
             </div>
         </div>
