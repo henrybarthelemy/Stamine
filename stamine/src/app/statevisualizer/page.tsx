@@ -51,7 +51,6 @@ const StateVisualizer = () => {
                         'border-width': 0,
                         'width': 50,
                         'height': 50,
-                        'cursor': 'default'
                     }
                 },
                 {
